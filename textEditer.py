@@ -1,12 +1,12 @@
 
-from PyQt5.QtWidgets import QMainWindow, QWidget, QTextEdit, QHBoxLayout, QApplication, QMenuBar, QMenu
+from PyQt5.QtWidgets import *
 import sys
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
-        self.setWindowTitle("Edit:)")
+        self.setWindowTitle("Editer:)")
         self.setMinimumSize(400,600)
         self.main = QWidget()
         self.setCentralWidget(self.main)
@@ -15,24 +15,36 @@ class MainWindow(QMainWindow):
         self.initate()
     
     def initate(self):
-        self.textFrame = QTextEdit()
-        self.layout = QHBoxLayout()
+        self.layout = QVBoxLayout()
         self.main.setLayout(self.layout)
 
+        # text frame
+        self.textFrame = QTextEdit()
         self.layout.addWidget(self.textFrame)
 
-        #menu bar 
-        self.head = QMenuBar()
-        self.setMenuBar(self.head)
-        self.file = QMenu()
-        self.head.addMenu("File")
-        self.head.addMenu("Edit")
-        self.head.addMenu("Help")
+        # button
+        self.buttonLayout = QHBoxLayout()
+        self.layout.addLayout(self.buttonLayout)
 
-        # file menu
-        self.file.addMenu("Open file")
-        self.file.addMenu("New file")
+        self.getFileButton = QPushButton("Open File")
+        self.getFileButton.clicked.connect(self.openFile)
+        
+        self.saveFileButton = QPushButton("Save File")
+        self.saveFileButton.clicked.connect(self.saveFile)
 
+        self.buttonLayout.addWidget(self.getFileButton)
+        self.buttonLayout.addWidget(self.saveFileButton)
+
+    def openFile(self):
+        self.filePath = QFileDialog.getOpenFileName()
+        with open(self.filePath[0], "r") as f:
+            data = f.read()
+        self.textFrame.setText(data)
+        print(self.textFrame.toPlainText())
+    
+    def saveFile(self):
+        with open(self.filePath[0], "w") as f:
+            data = f.write(self.textFrame.toPlainText())
 
 if __name__ == '__main__':
     
@@ -42,4 +54,5 @@ if __name__ == '__main__':
     screen.show()
 
     sys.exit(app.exec_())
+
 		
